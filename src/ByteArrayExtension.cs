@@ -72,6 +72,6 @@ public static class ByteArrayExtension
     [Pure]
     public static bool IsEmpty(this byte[]? value)
     {
-        return value == null || value.Length == 0;
+        return value is null || value.Length == 0;
     }
 }
