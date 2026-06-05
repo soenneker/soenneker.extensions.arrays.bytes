@@ -39,6 +39,11 @@ public static class ByteArrayExtension
         return Encoding.UTF8.GetString(value);
     }
 
+    /// <summary>
+    /// Executes the to hex operation.
+    /// </summary>
+    /// <param name="value">The value.</param>
+    /// <returns>The result of the operation.</returns>
     [Pure]
     public static string ToHex(this byte[] value)
     {
