@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -132,7 +133,7 @@ public static class ByteArrayExtension
     /// <returns>True if the byte array is null or empty; otherwise, false.</returns>
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsEmpty(this byte[]? value)
+    public static bool IsEmpty([NotNullWhen(false)] this byte[]? value)
     {
         return value is null || value.Length == 0;
     }
