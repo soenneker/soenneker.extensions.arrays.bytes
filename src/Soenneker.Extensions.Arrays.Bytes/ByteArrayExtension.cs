@@ -68,21 +68,7 @@ public static class ByteArrayExtension
         if (value.Length == 0)
             return "";
 
-        return string.Create(value.Length * 2, value, static (dst, src) =>
-        {
-            var di = 0;
-
-            for (var i = 0; i < src.Length; i++)
-            {
-                byte b = src[i];
-
-                int hi = b >> 4;
-                int lo = b & 0xF;
-
-                dst[di++] = (char)(hi < 10 ? '0' + hi : 'a' + (hi - 10));
-                dst[di++] = (char)(lo < 10 ? '0' + lo : 'a' + (lo - 10));
-            }
-        });
+        return Convert.ToHexStringLower(value);
     }
 
     /// <summary>
