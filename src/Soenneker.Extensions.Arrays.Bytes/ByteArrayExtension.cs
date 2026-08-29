@@ -41,10 +41,10 @@ public static class ByteArrayExtension
     }
 
     /// <summary>
-    /// Executes the to hex operation.
+    /// Converts the byte array to an uppercase hexadecimal string; an empty array produces an empty string.
     /// </summary>
-    /// <param name="value">The value.</param>
-    /// <returns>The result of the operation.</returns>
+    /// <param name="value">The bytes to encode.</param>
+    /// <returns>The uppercase hexadecimal representation.</returns>
     [Pure]
     public static string ToHex(this byte[] value)
     {
