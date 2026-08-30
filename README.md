@@ -5,7 +5,7 @@
 
 # ![](https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png) Soenneker.Extensions.Arrays.Bytes
 
-A collection of helpful byte[] extension methods.
+UTF-8 decoding, hexadecimal and Base64 encoding, `MemoryStream` wrapping, and null/empty checks for byte arrays and read-only byte spans.
 
 ## Installation
 
@@ -13,20 +13,47 @@ A collection of helpful byte[] extension methods.
 dotnet add package Soenneker.Extensions.Arrays.Bytes
 ```
 
-## Quick start
+## Text and binary encodings
 
 ```csharp
+using System.Text;
 using Soenneker.Extensions.Arrays.Bytes;
 
-byte[] value = [1, 2, 3];
-var result = value.ToStr();
+byte[] bytes = Encoding.UTF8.GetBytes("hello");
+
+string text = bytes.ToStr();              // "hello"
+string hex = bytes.ToHex();               // "68656C6C6F"
+string lowerHex = bytes.ToHexLower();     // "68656c6c6f"
+string base64 = bytes.ToBase64String();   // "aGVsbG8="
 ```
 
-## Common operations
+`ToStr()` decodes with .NET's default UTF-8 encoding behavior. Invalid byte sequences are replaced with the Unicode replacement character; this method does not reject malformed UTF-8. Use a strict `UTF8Encoding` instance when invalid input must fail.
 
-- `ToStr()` - Converts the specified byte array to a UTF-8 encoded string. Returns a string representation of the byte array, decoded using UTF-8 encoding.
-- `ToHex()` - Converts the bytes to an uppercase hexadecimal string with no separators.
-- `ToHexLower()` - Converts the specified byte array to its lowercase hexadecimal string representation. Returns a string containing the lowercase hexadecimal representation of the input bytes. Returns an empty string if the array is empty.
-- `ToBase64String()` - Converts the specified byte array to a Base64-encoded string. Returns a Base64-encoded string.
-- `ToStream()` - Converts the byte array into a `MemoryStream`. Returns a `MemoryStream` containing the byte array data.
-- `IsEmpty()` - Determines whether the byte array is null or empty.
+`ToHex()` and `ToHexLower()` produce two characters per byte with no prefix or separators. `ToBase64String()` produces standard padded Base64, not Base64URL. Empty inputs produce an empty string. These methods encode data; they do not encrypt, hash, compress, authenticate, or hide it.
+
+The UTF-8 and Base64 methods also have `ReadOnlySpan<byte>` overloads. Returned strings are allocations even when the source is a span.
+
+## Stream wrapping
+
+```csharp
+byte[] buffer = [1, 2, 3];
+
+using MemoryStream stream = buffer.ToStream();
+```
+
+`ToStream()` returns a writable, non-expandable stream backed by the original array with `Position == 0`. Writing within its existing length changes `buffer`; changing `buffer` is visible through the stream. Writing past capacity throws. Disposing the stream does not clear or dispose the byte array.
+
+Copy the data first when the stream and caller must not share mutations:
+
+```csharp
+using MemoryStream isolated = buffer.ToArray().ToStream();
+```
+
+## Empty checks and nulls
+
+```csharp
+byte[]? optional = null;
+bool empty = optional.IsEmpty(); // true
+```
+
+`IsEmpty()` is the only nullable-array API and returns `true` for null or zero length. The conversion methods require a non-null receiver; a null array results in `NullReferenceException`.

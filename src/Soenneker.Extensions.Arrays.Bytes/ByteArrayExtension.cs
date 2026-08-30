@@ -74,7 +74,7 @@ public static class ByteArrayExtension
     /// <summary>
     /// Converts the specified byte array to a Base64-encoded string.
     /// </summary>
-    /// <param name="value">The byte array to encode. If null or empty, an empty string is returned.</param>
+    /// <param name="value">The byte array to encode. An empty array returns an empty string.</param>
     /// <returns>A Base64-encoded string.</returns>
     [Pure]
     public static string ToBase64String(this byte[] value)
@@ -105,7 +105,7 @@ public static class ByteArrayExtension
     /// Converts the byte array into a <see cref="MemoryStream"/>.
     /// </summary>
     /// <param name="value">The byte array to convert.</param>
-    /// <returns>A <see cref="MemoryStream"/> containing the byte array data.</returns>
+    /// <returns>A writable, non-expandable <see cref="MemoryStream"/> backed by the original array, positioned at zero.</returns>
     [Pure]
     public static MemoryStream ToStream(this byte[] value)
     {
